@@ -1,0 +1,11 @@
+$kind: collection
+name: Send Mail.
+description: >-
+  Esta colección contiene metodos HTTP para enviar correos,.
+
+
+  1. "Enviar correo simple" sirve para enviar un correo electonico mediante un
+  JSON para poder enviar recibir un mensaje y recibir una respuesta todo esto
+  mediante la URL de la API.
+      
+      1. Al usar esta api podemos recibir dos objetos el primero es el mismo JSON que se envio, el otro es un JSON que contiene una causa del por que no se pudo enviar el correo.

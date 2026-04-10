@@ -1,0 +1,74 @@
+$kind: http-request
+name: Enviar correo simple
+url: localhost:8080/mail/send
+method: POST
+body:
+  type: json
+  content: "// 1 Procesa la petición.\r
+
+    {\r
+
+    \    \"mail\" : \"perro@gmail.com\",\r
+
+    \    \"header\" : \"Cabecera del correo\",\r
+
+    \    \"body\" : \"Cuerpo del correo el correo electronico\",\r
+
+    \    \"name\" : \"Mark\"\r
+
+    }\r
+
+    \r
+
+    //2. Error objeto vacio\r
+
+    // {}\r
+
+    \r
+
+    // 3. Error de algun atributo vacio.\r
+
+    // {\r
+
+    //     \"mail\" : \"\",\r
+
+    //     \"header\" : \"Cabecera del correo\",\r
+
+    //     \"body\" : \"Cuerpo del correo el correo electronico\",\r
+
+    //     \"name\" : \"Mark\"\r
+
+    // }\r
+
+    \r
+
+    //4.Error de correo, (no puede enviar ni recibir correos).\r
+
+    // 4.1\r
+
+    // {\r
+
+    //     \"mail\" : \"perro@@gmail.com\",\r
+
+    //     \"header\" : \"Cabecera del correo\",\r
+
+    //     \"body\" : \"Cuerpo del correo el correo electronico\",\r
+
+    //     \"name\" : \"Mark\"\r
+
+    // }\r
+
+    // 4.2\r
+
+    // {\r
+
+    //     \"mail\" : \"perro@gmail..com\",\r
+
+    //     \"header\" : \"Cabecera del correo\",\r
+
+    //     \"body\" : \"Cuerpo del correo el correo electronico\",\r
+
+    //     \"name\" : \"Mark\"\r
+
+    // }"
+order: 1775777468235
