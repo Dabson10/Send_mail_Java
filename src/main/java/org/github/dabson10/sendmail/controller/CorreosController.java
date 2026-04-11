@@ -10,7 +10,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -52,6 +51,7 @@ public class CorreosController {
             return new ResponseEntity<>(ts, HttpStatus.UNPROCESSABLE_CONTENT);
         }
         try {
+            System.out.println(">|<");
             //Manda un correo electrónico del Remitente a mi destinatario(Yo).
             mailSend.sendMail(correo);
             //Se realiza una respuesta utilizando el mismo sendMail y algunos datos del correo enviado.
