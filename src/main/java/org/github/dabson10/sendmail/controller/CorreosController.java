@@ -60,9 +60,14 @@ public class CorreosController {
             return new ResponseEntity<>(correo, HttpStatus.ACCEPTED);
 
         } catch (MailException mailEx) {
+            System.err.println(">>> MailException: " + mailEx.getMessage());
+            mailEx.printStackTrace();
             ts.setMessage("Error con el proveedor de correo electrónico.");
             return new ResponseEntity<>(ts, HttpStatus.INTERNAL_SERVER_ERROR);
+
         } catch (Exception e) {
+            System.err.println(">>> Exception: " + e.getMessage());
+            e.printStackTrace();
             ts.setMessage("Se encontró con un error inesperado");
             return new ResponseEntity<>(ts, HttpStatus.INTERNAL_SERVER_ERROR);
         }
