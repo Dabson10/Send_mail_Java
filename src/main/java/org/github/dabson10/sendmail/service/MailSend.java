@@ -1,6 +1,5 @@
 package org.github.dabson10.sendmail.service;
 
-import lombok.AllArgsConstructor;
 import lombok.Setter;
 import org.github.dabson10.sendmail.entity.Correo;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +19,11 @@ public class MailSend implements MailSendImpl{
     private String correoPersonal;
     @Value("${spring.owner.name}")
     private String nombre;
+    @Value("${spring.mail.port}")
+    private String puerto;
+    @Value("${spring.mail.password}")
+    private String clave;
+
 
     public MailSend(MailSender mailSender, SimpleMailMessage templateMessage){
         this.mailSender = mailSender;
@@ -42,6 +46,11 @@ public class MailSend implements MailSendImpl{
         msg.setReplyTo(correo.getMail());
         msg.setText(correo.getBody() + "\n"  + correo.getMail());
         try{
+            System.out.println("Datos: " +
+                    "\nNombre: " + nombre +
+                    "\nCorreo: " + correoPersonal +
+                    "\nClave: " + clave +
+                    "\nMail port: "  + puerto);
             this.mailSender.send(msg);
         }catch(MailException mailEx){
             System.err.println(mailEx.getMessage());
