@@ -20,10 +20,6 @@ public class MailSend implements MailSendImpl {
     private String correoPersonal;
     @Value("${spring.owner.name}")
     private String nombre;
-    @Value("${spring.mail.port}")
-    private String puerto;
-    @Value("${spring.mail.password}")
-    private String clave;
 
 
     public MailSend(MailSender mailSender, SimpleMailMessage templateMessage) {
@@ -48,12 +44,10 @@ public class MailSend implements MailSendImpl {
             msg.setSubject(correo.getHeader());
             msg.setReplyTo(correo.getMail());
             msg.setText(correo.getBody() + "\n" + correo.getMail());
-
-            System.out.println("Datos: " +
-                    "\nNombre: " + nombre +
-                    "\nCorreo: " + correoPersonal +
-                    "\nClave: " + clave +
-                    "\nMail port: " + puerto);
+            //Si quieres ver el seguimiento del código quita el comentario siguiente.
+//            System.out.println("Datos: " +
+//                    "\nNombre: " + nombre +
+//                    "\nCorreo: " + correoPersonal);
             this.mailSender.send(msg);
         } catch (MailException mailEx) {
             System.err.println(mailEx.getMessage());

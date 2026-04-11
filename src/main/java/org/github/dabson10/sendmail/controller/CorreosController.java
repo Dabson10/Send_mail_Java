@@ -51,7 +51,6 @@ public class CorreosController {
             return new ResponseEntity<>(ts, HttpStatus.UNPROCESSABLE_CONTENT);
         }
         try {
-            System.out.println(">|<");
             //Manda un correo electrónico del Remitente a mi destinatario(Yo).
             mailSend.sendMail(correo);
             //Se realiza una respuesta utilizando el mismo sendMail y algunos datos del correo enviado.
