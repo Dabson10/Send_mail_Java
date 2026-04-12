@@ -9,7 +9,6 @@ import org.github.dabson10.sendmail.utilty.ValidateEmail;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.MailException;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -58,12 +57,6 @@ public class CorreosController {
             Correo respuesta = formatMail.responseFormat(correo);
             mailSend.sendResponse(respuesta, correo);
             return new ResponseEntity<>(correo, HttpStatus.ACCEPTED);
-
-        } catch (MailException mailEx) {
-            System.err.println(">>> MailException: " + mailEx.getMessage());
-            mailEx.printStackTrace();
-            ts.setMessage("Error con el proveedor de correo electrónico.");
-            return new ResponseEntity<>(ts, HttpStatus.INTERNAL_SERVER_ERROR);
 
         } catch (Exception e) {
             System.err.println(">>> Exception: " + e.getMessage());

@@ -3,38 +3,35 @@ package org.github.dabson10.sendmail.service;
 import lombok.Setter;
 import org.github.dabson10.sendmail.entity.Correo;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.MailException;
-import org.springframework.mail.MailSender;
-import org.springframework.mail.SimpleMailMessage;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.http.HttpHeaders;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 //@AllArgsConstructor
 @Setter
 @Service
 public class MailSend implements MailSendImpl {
 
-    private final MailSender mailSender;
-    private final SimpleMailMessage templateMessage;
-    public SimpleMailMessage msg;
-    @Value("${spring.mail.username}")
+    @Value("${spring.owner.mail}")
     private String correoPersonal;
     @Value("${spring.owner.name}")
     private String nombre;
-    @Value("${spring.mail.port}")
-    private String puerto;
-    @Value("${spring.mail.password}")
-    private String clave;
+    @Value("${brevo.api.key}")
+    private String apyKey;
 
-
-    public MailSend(MailSender mailSender, SimpleMailMessage templateMessage) {
-        this.mailSender = mailSender;
-        this.templateMessage = templateMessage;
-        this.msg = new SimpleMailMessage(this.templateMessage);
-    }
+    private final RestTemplate rt = new RestTemplate();
+    private static final String brevo_url = "https://api.brevo.com/v3/smtp/email";
 
     /**
-     * Esta función sirve para enviar un correo electrónico de un Remitente a un destinatario.
-     *
+     * Para la version <b>free</b> o cuando no pagas ningún servicio que acepte el protocolo SMTP y utilizas algún proveedor
+     * como <b>Brevo</b> el cual realizara todo este trafico de correos electrónicos, no enviara un correo del remitente a tu
+     * correo personal sera todo lo contrario. Del correo vinculado con <b>Brevo o cualquier proveedor</b> se enviara un correo
+     * a tu perfil personal solamente que en el cuerpo del mensaje se añadirá una sección en donde se informara quien envio el correo,
+     * incluyendo el correo mismo.
      * @param correo : parametro que cuenta con datos fundamentales como:
      *               -Mail: Correo del Remitente.
      *               -Asunto o Header: Mensaje con el asunto del correo.
@@ -43,31 +40,22 @@ public class MailSend implements MailSendImpl {
      */
     @Override
     public void sendMail(Correo correo) {
-        try {
-            msg.setTo(correoPersonal);
-            msg.setSubject(correo.getHeader());
-            msg.setReplyTo(correo.getMail());
-            msg.setText(correo.getBody() + "\n" + correo.getMail());
-
-            System.out.println("Datos: " +
-                    "\nNombre: " + nombre +
-                    "\nCorreo: " + correoPersonal +
-                    "\nClave: " + clave +
-                    "\nMail port: " + puerto);
-            this.mailSender.send(msg);
-        } catch (MailException mailEx) {
-            System.err.println(mailEx.getMessage());
-        }catch(Exception e){
-            System.err.println(">>> ERROR CRÍTICO AL ENVIAR CORREO:");
-            System.err.println("Causa: " + e.getMessage());
-            e.printStackTrace(); // Esto te dará el "stack trace" completo en Render
-        }
+        enviar(
+                correoPersonal,           // Destinatario (Tu correo personal).
+                nombre,                   // Nombre del destinatario.
+                correoPersonal,           // Aquí se envia el correo desde tu correo asociado a tu correo personal.
+                correo.getHeader(),       // Asunto del correo electrónico
+                "Correo enviado por: " + correo.getName() + " Correo: " + correo.getMail() + "\n\n" + correo.getBody()
+        );
+        System.out.println("Correo enviado por: " + correo.getName() + " Correo: " + correo.getMail() + "\n\n" + correo.getBody());
     }
 
     /**
      * Esta función está muy relacionada con {@link #sendMail(Correo)} ya que al instante de enviar el mail del Remitente
      * al Destinatario se realiza una respuesta por parte del destinatario al Remitente, por lo que los datos
      * son prácticamente lo mismo solo que cambia el destinatario y el remitente.
+     * Con una diferencia en el caso del uso <b>free</b> la respuesta generada no será con base al correo personal si no
+     * al correo asociado con <b>Brevo u otro proveedor</b>.
      *
      * @param respuesta : A diferencia del correo este parametro es contiene los datos
      *                  del reclutador o persona que relleno el formulario.
@@ -76,27 +64,45 @@ public class MailSend implements MailSendImpl {
      */
     @Override
     public void sendResponse(Correo respuesta, Correo correo) {
-        try {
-            msg.setTo(respuesta.getMail());
-            msg.setSubject("Confirmación de: " + respuesta.getHeader());
-            msg.setReplyTo(correoPersonal);
-            msg.setText("Hola " + respuesta.getName() + ", \n" +
-                    "Muchas gracias por tu mensaje. He recibido tu información de contacto con éxito.\n" +
-                    "Te estaré escribiendo pronto para dar seguimiento a tu propuesta o comentario.\n" +
-                    "Que tengas un excelente dia.\n\n" +
-                    "De: " + nombre + ".\n\n" +
-                    ">| Este es un mensaje automático de confirmación. No es necesario responder a este correo directamente |<\n\n" +
-                    ">|---- Mensaje Original ----|<\n" +
-                    "Asunto: " + correo.getHeader() +
-                    "\nMensaje: " + correo.getBody());
+        enviar(
+                correo.getMail(),
+                nombre,
+                correoPersonal,
+                respuesta.getHeader(),
+                respuesta.getBody()
+        );
+    }
 
-            this.mailSender.send(msg);
-        } catch (MailException mailEx) {
-            System.err.println(mailEx.getMessage());
-        }catch(Exception e ){
-            System.err.println(">>> ERROR CRÍTICO AL ENVIAR CORREO:");
-            System.err.println("Causa: " + e.getMessage());
-            e.printStackTrace(); // Esto te dará el "stack trace" completo en Render
+    private void enviar(String destinatario, String remitenteNombre,
+                        String remitenteEmail, String asunto, String contenido) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+
+            ObjectNode sender = mapper.createObjectNode();
+            sender.put("name", remitenteNombre);
+            sender.put("email", remitenteEmail);
+
+            ObjectNode toItem = mapper.createObjectNode();
+            toItem.put("email", destinatario);
+
+            ObjectNode payload = mapper.createObjectNode();
+            payload.set("sender", sender);
+            payload.set("to", mapper.createArrayNode().add(toItem));
+            payload.put("subject", asunto);
+            payload.put("textContent", contenido);
+
+            String body = mapper.writeValueAsString(payload);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("api-key", apyKey);
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            HttpEntity<String> request = new HttpEntity<>(body, headers);
+            rt.postForEntity(brevo_url, request, String.class);
+
+        } catch (Exception e) {
+            System.err.println(">>> Error al enviar: " + e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 

@@ -42,4 +42,14 @@ public class Correo {
         }
         return validacion;
     }
+
+    @Override
+    public String toString() {
+        return "Correo{" +
+                "mail='" + mail + '\'' +
+                ", header='" + header + '\'' +
+                ", body='" + body + '\'' +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }
