@@ -26,6 +26,22 @@ public class CorreosController {
         this.validateEmail = validateEmail;
     }
 
+    /**
+     * Esta función solo sirve para despertar al servidor y la petición del correo electrónico
+     * no tarde tanto en responder.
+     */
+    @PostMapping("/wakeup")
+    public void mensaje(){
+        System.out.println("Despertando al servidor..");
+    }
+
+    /**
+     *El siguiente endpoint sirve para mandar un JSON con los atributos mail, header, body y message
+     * este endpoint tiene validación para cuando llega un objeto con valores null, cuando hay algún
+     * valor vacío, validamos que el correo electrónico pueda recibir y mandar correos electrónicos.
+     * @param correo : Objeto con los atributos de mail, header, body y message.
+     * @return : Regresará un objeto de tipo Correo y si hubo algún error entonces regresará un mensaje del error
+     */
     @PostMapping("/send")
     public ResponseEntity<?> sendCorreo(
             @Valid @RequestBody Correo correo
@@ -35,7 +51,8 @@ public class CorreosController {
 
         //Si el objeto es un null entonces regresamos un estado 400
         if (correo == null) {
-            return new ResponseEntity<>((HttpHeaders) null, HttpStatus.BAD_REQUEST);
+            ts.setMessage("Se recibió un valor vacío.");
+            return new ResponseEntity<>(ts, HttpStatus.BAD_REQUEST);
         }
 
         //Validamos que no se guarden datos vacíos en el objeto.
