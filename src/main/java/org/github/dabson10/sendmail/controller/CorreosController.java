@@ -6,20 +6,23 @@ import org.github.dabson10.sendmail.entity.TimeStamp;
 import org.github.dabson10.sendmail.service.MailSend;
 import org.github.dabson10.sendmail.utilty.ResponseFormat;
 import org.github.dabson10.sendmail.utilty.ValidateEmail;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 @RestController
-@CrossOrigin(origins = "https://cv-juan-david.netlify.app/")
 @RequestMapping("/mail")
 public class CorreosController {
 
     private final MailSend mailSend;
     private final ResponseFormat formatMail;
     private final ValidateEmail validateEmail;
-
+    private static final Logger log = LoggerFactory.getLogger(CorreosController.class);
+    String cyan = "\u001B[36m";
+    String RESET = "\u001B[0m";
     public CorreosController(MailSend mailSend, ResponseFormat formatMail, ValidateEmail validateEmail) {
         this.mailSend = mailSend;
         this.formatMail = formatMail;
@@ -32,7 +35,9 @@ public class CorreosController {
      */
     @PostMapping("/wakeup")
     public void mensaje(){
-        System.out.println("Despertando al servidor..");
+        log.info("=======================");
+        log.info("Despertando el servidor");
+        log.info("=======================");
     }
 
     /**
@@ -67,7 +72,6 @@ public class CorreosController {
             return new ResponseEntity<>(ts, HttpStatus.UNPROCESSABLE_CONTENT);
         }
         try {
-            System.out.println(">|<");
             //Manda un correo electrónico del Remitente a mi destinatario(Yo).
             mailSend.sendMail(correo);
             //Se realiza una respuesta utilizando el mismo sendMail y algunos datos del correo enviado.
@@ -76,7 +80,10 @@ public class CorreosController {
             return new ResponseEntity<>(correo, HttpStatus.ACCEPTED);
 
         } catch (Exception e) {
-            System.err.println(">>> Exception: " + e.getMessage());
+            log.error("=========================");
+            log.error(">>> Exception: {}", e.getMessage());
+            log.error("=========================");
+
             e.printStackTrace();
             ts.setMessage("Se encontró con un error inesperado");
             return new ResponseEntity<>(ts, HttpStatus.INTERNAL_SERVER_ERROR);
