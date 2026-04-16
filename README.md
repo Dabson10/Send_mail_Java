@@ -1,8 +1,8 @@
-# Java Mail Send 📧
+# Java Mail Send 
 
 _Este proyecto sirve para enviar correos mediante el uso de HTTP y la librería Java MailSender (SMTP)_
 
-## Comenzando 🚀
+## Comenzando 
 
 Para iniciar, es necesario saber que el proyecto está dividido en dos ramas. Puedes usar la que más necesites; ambas cumplen el mismo objetivo bajo diferentes condiciones:
 
@@ -14,7 +14,7 @@ Antes de clonar el proyecto, asegúrate de tener instaladada la versión de java
 
 * [Java 17+](https://www.oracle.com/java/technologies/downloads/) - Versión recomendada para Spring Boot 4.0.5 en adelante.
 
-### Instalación 🔧
+### Instalación 
 
 _Clona el repositorio en tu máquina local:_
 
@@ -22,18 +22,18 @@ _Clona el repositorio en tu máquina local:_
 git clone [https://github.com/Dabson10/Send_mail_Java.git](https://github.com/Dabson10/Send_mail_Java.git)
 ```
 
-## Antes de ejecutar ⚙️
+## Antes de ejecutar 
 
 Cuando clones el repositorio, **no lo ejecutes de inmediato**. Es necesario configurar las variables de entorno para que el sistema funcione al 100%.
 
-### 1. Rama `free` ☁️
+### 1. Rama `free` 
 Debes agregar estas variables en tu IDE o en el panel de configuración de tu servidor:
 
 > **`${MAIL}`**: Correo electrónico de destino.  
 > **`${NAME}`**: Nombre de la persona asociada al correo electrónico.  
 > **`${BREVO_API_KEY}`**: API Key de Brevo (utilizada para sustituir SMTP por su facilidad de conexión).
 
-### 2. Rama `ssl` 🔒
+### 2. Rama `ssl` 
 Para esta rama, las variables dependen directamente de tu proveedor de correo:
 
 * **`${MAIL_HOST}`**: Servidor SMTP de tu proveedor.
@@ -92,7 +92,7 @@ Para probar el envío, realiza una petición **POST** al endpoint correspondient
 // }
 ```
 
-## Despliegue 📦
+## Despliegue 
 
 Para desplegar este proyecto en algún servicio de alojamiento, te recomiendo seguir estos pasos:
 
@@ -100,14 +100,14 @@ Para desplegar este proyecto en algún servicio de alojamiento, te recomiendo se
 2. Desde el servicio de hosting que prefieras (como Render, Railway o Fly.io), conecta tu cuenta de GitHub y selecciona el repositorio.
 3. El proyecto ya incluye un **Dockerfile**, lo que permitirá que el servicio lo detecte y lo suba rápidamente sin configuraciones adicionales complejas.
 
-## Construido con 🛠️
+## Construido con 
 
 * [Spring Boot](https://spring.io/projects/spring-boot) - El framework web principal.
 * [Maven](https://maven.apache.org/) - Manejador de dependencias.
 * [Java Mail Sender](https://javaee.github.io/javamail/) - Librería utilizada para la gestión de correos.
 
-## Autor ✒️
+## Autor 
 
 * **Juan David Almaraz** - *Trabajo Inicial* - [Dabson10](https://github.com/Dabson10)
 
-⌨️ con ❤️ por [Dabson :3](https://github.com/Dabson10)
+Hecho por: [Dabson :3](https://github.com/Dabson10)
