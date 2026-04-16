@@ -55,7 +55,8 @@ Si quieres utilizar Brevo y hacer más rápido el despliegue gratuito, debes hac
 3. Entra en la sección SMTP y API, dentro de esta en claves API y MCP.
 4. Genera una nueva clave API y agrégala en las variables de entorno.
 
-[Imagen de la ubicación]()
+Asi encontraras la ubicacion de la API
+<img width="1919" height="869" alt="Screenshot 2026-04-13 181941" src="https://github.com/user-attachments/assets/04459588-7cd4-4f6f-a74f-ae8b2a353ce3" />
 
 ### Prueba del endpoint `sendCorreo` 🔩
 
